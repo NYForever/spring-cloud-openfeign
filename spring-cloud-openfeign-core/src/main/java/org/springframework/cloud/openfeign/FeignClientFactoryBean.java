@@ -348,6 +348,8 @@ public class FeignClientFactoryBean implements FactoryBean<Object>, Initializing
 	}
 
 	/**
+	 * 生成对象
+	 *
 	 * @param <T> the target type of the Feign client
 	 * @return a {@link Feign} client created with the specified data and the context
 	 * information
@@ -358,6 +360,7 @@ public class FeignClientFactoryBean implements FactoryBean<Object>, Initializing
 				: applicationContext.getBean(FeignContext.class);
 		Feign.Builder builder = feign(context);
 
+		//没有标注url，通过name属性 loadBalance对应的服务
 		if (!StringUtils.hasText(url)) {
 			if (!name.startsWith("http")) {
 				url = "http://" + name;
@@ -366,6 +369,8 @@ public class FeignClientFactoryBean implements FactoryBean<Object>, Initializing
 				url = name;
 			}
 			url += cleanPath();
+
+			//
 			return (T) loadBalance(builder, context,
 					new HardCodedTarget<>(type, name, url));
 		}

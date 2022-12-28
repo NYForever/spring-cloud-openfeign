@@ -137,6 +137,12 @@ class FeignClientsRegistrar
 		this.resourceLoader = resourceLoader;
 	}
 
+	/**
+	 * 实现ImportBeanDefinitionRegistrar接口，通过该方法注入beanDefinition信息
+	 *
+	 * @param metadata
+	 * @param registry
+	 */
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata metadata,
 			BeanDefinitionRegistry registry) {
@@ -176,6 +182,7 @@ class FeignClientsRegistrar
 			scanner.addIncludeFilter(new AnnotationTypeFilter(FeignClient.class));
 			Set<String> basePackages = getBasePackages(metadata);
 			for (String basePackage : basePackages) {
+				//scanner.findCandidateComponents(basePackage) 扫描包信息，加载所有标注了 FeignClient注解的类
 				candidateComponents.addAll(scanner.findCandidateComponents(basePackage));
 			}
 		}
@@ -213,6 +220,10 @@ class FeignClientsRegistrar
 				? (ConfigurableBeanFactory) registry : null;
 		String contextId = getContextId(beanFactory, attributes);
 		String name = getName(attributes);
+
+		//注入FeignClientFactoryBean，用户生成Feign的代理对象
+		//实现了FactoyrBean接口，通过getObject()方法创建对象
+		//每个FeignClient标注的对象，都会对应一个FeignClientFactoryBean对象
 		FeignClientFactoryBean factoryBean = new FeignClientFactoryBean();
 		factoryBean.setBeanFactory(beanFactory);
 		factoryBean.setName(name);
