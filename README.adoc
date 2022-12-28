@@ -46,17 +46,17 @@ https://juejin.cn/post/7097124836496900127
 
 入口：EnableFeignClients注解Import的类 `FeignClientsRegistrar`
 
-1. 每个 `@FeignClient`标记的接口类都会生成对应的 `FeignClientFactoryBean`对象
-2. FactoryBean是一个工厂bean，通过 `getObject()`方法生成对应的对象
-3. url配置为空，则通过name配置的服务名进行轮训 `loadBalance()`,获取对应的代理对象
-4. 最后会走到 `ReflectiveFeign`的 `newInstance()`创建代理对象
-5. `FeignInvocationHandler`是真正执行的子类，当接到请求时，调用其 `invoke()`方法，创建代理对象
-6. `SynchronousMethodHandler`的 `executeAndDecode()`
-7. `client.execute(request, options)`继续执行，到类 `LoadBalancerFeignClient` `executeWithLoadBalancer()`
-8. `command.submit()`的`this.selectServer()`；`loadBalancerContext.getServerFromLoadBalancer()`;`lb.chooseServer(loadBalancerKey)`
-9. `BaseLoadBalancer`的`chooseServer()`;`rule.choose(key)`
-10. `PredicateBasedRule`的`chooseRoundRobinAfterFiltering()`
-11. 最终`AbstractServerPredicate`的`incrementAndGetModulo()`
+1. 每个 `@FeignClient` 标记的接口类都会生成对应的 `FeignClientFactoryBean` 对象
+2. FactoryBean是一个工厂bean，通过 `getObject()` 方法生成对应的对象
+3. url配置为空，则通过name配置的服务名进行轮训 `loadBalance()` ,获取对应的代理对象
+4. 最后会走到 `ReflectiveFeign` 的 `newInstance()` 创建代理对象
+5. `FeignInvocationHandler` 是真正执行的子类，当接到请求时，调用其 `invoke()` 方法，创建代理对象
+6. `SynchronousMethodHandler` 的 `executeAndDecode()`
+7. `client.execute(request, options)` 继续执行，到类 `LoadBalancerFeignClient` `executeWithLoadBalancer()`
+8. `command.submit()` 的 `this.selectServer()` ；`loadBalancerContext.getServerFromLoadBalancer()` ; `lb.chooseServer(loadBalancerKey)`
+9. `BaseLoadBalancer` 的 `chooseServer()` ; `rule.choose(key)`
+10. `PredicateBasedRule` 的 `chooseRoundRobinAfterFiltering()`
+11. 最终 `AbstractServerPredicate` 的 `incrementAndGetModulo()`
 
 
 
