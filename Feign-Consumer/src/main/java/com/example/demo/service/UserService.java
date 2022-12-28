@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author MrBird
  */
-@FeignClient(value = "Server-Provider",url = "${rwn.test.url}",fallback = UserServiceFallback.class)
+@FeignClient(value = "Server-Provider",fallback = UserServiceFallback.class)
 public interface UserService {
 
     @GetMapping("user/{id}")
