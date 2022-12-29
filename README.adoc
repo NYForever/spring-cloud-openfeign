@@ -59,6 +59,8 @@ https://juejin.cn/post/7097124836496900127
 11. 最终 `AbstractServerPredicate` 的 `incrementAndGetModulo()`
 
 
+### 2.openFeign远程调用的过程
+
 1. OpenFeign通过反射机制为feign接口创建出一个代理对象
 2. 拿到feign接口上的@FeignClient注解的value值，解析出url：http://order-service
 3. 拿到feign接口中的方法签名上的@RequestMapping注解，解析出url：http://order-service/doOrder
@@ -70,9 +72,9 @@ https://juejin.cn/post/7097124836496900127
 9. 发送真正的请求：restTemplate.getForObject(“http://ip:port/doOrder”, String.class)
 
 
-### 2.ribbon的轮询策略
+### 3.ribbon的轮询策略
 
-都继承自IRule
+所有策略都继承自IRule
 
 1. RandomRule（随机）
 2. RoundRobinRule（轮询）
