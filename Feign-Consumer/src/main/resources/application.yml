@@ -13,7 +13,7 @@ eureka:
 
 feign:
   hystrix:
-    enabled: false
+    enabled: true
 logging:
   level:
     com:

@@ -59,9 +59,47 @@ https://juejin.cn/post/7097124836496900127
 11. 最终 `AbstractServerPredicate` 的 `incrementAndGetModulo()`
 
 
+1. OpenFeign通过反射机制为feign接口创建出一个代理对象
+2. 拿到feign接口上的@FeignClient注解的value值，解析出url：http://order-service
+3. 拿到feign接口中的方法签名上的@RequestMapping注解，解析出url：http://order-service/doOrder
+4. 将解析出的url交给ribbon
+5. ribbon截取出url地址中的服务名
+6. 从服务列表中找到该名称的服务的实例集合(服务发现)
+7. 根据负载均衡算法选出一个实例(默认是轮询算法)
+8. 拿到该实例的ip和port，替换原来url中的服务名
+9. 发送真正的请求：restTemplate.getForObject(“http://ip:port/doOrder”, String.class)
+
+
+### 2.ribbon的轮询策略
+
+都继承自IRule
+
+1. RandomRule（随机）
+2. RoundRobinRule（轮询）
+3. WeightedResponseTimeRule（响应时间权重轮询）
+4. RetryRule（重试）
+5. BestAvailableRule（最小并发）
+6. AvailabilityFilteringRule(可用断言过滤器)
+7. ZoneAvoidanceRule (可用性其性能断言)
+
+
+- 权重策略： WeightedResponseTimeRule，根据每个服务提供者的响应时间分配一个权重，响应时间越长，权重越小，被选中的可能性也就越低。它的实现原理是，刚开始使用轮询策略并开启一个计时器，每一段时间收集一次所有服务提供者的平均响应时间，然后再给每个服务提供者附上一个权重，权重越高被选中的概率也越大。
+- 最小连接数策略： BestAvailableRule，也叫最小并发数策略，它是遍历服务提供者列表，选取连接数最小的⼀个服务实例。如果有相同的最小连接数，那么会调用轮询策略进行选取。
+- 区域敏感策略： ZoneAvoidanceRule，根据服务所在区域(zone)的性能和服务的可用性来选择服务实例，在没有区域的环境下，该策略和轮询策略类似。
+- 可用敏感性策略： AvailabilityFilteringRule，先过滤掉非健康的服务实例，然后再选择连接数较小的服务实例。
+- 随机策略： RandomRule，从服务提供者的列表中随机选择一个服务实例。
+- 重试策略： RetryRule，按照轮询策略来获取服务，如果获取的服务实例为 null 或已经失效，则在指定的时间之内不断地进行重试来获取服务，如果超过指定时间依然没获取到服务实例则返回 null。
 
 
 
+如何使用，直接通过 `@Bean` 注入对应的类即可，比如：
+
+----
+@Bean
+public RandomRule getRule() {
+return new RandomRule();
+}
+----
 
 
 
