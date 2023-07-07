@@ -374,6 +374,7 @@ public class FeignClientFactoryBean implements FactoryBean<Object>, Initializing
 			return (T) loadBalance(builder, context,
 					new HardCodedTarget<>(type, name, url));
 		}
+		//标注了url，则name失效，直接调用url
 		if (StringUtils.hasText(url) && !url.startsWith("http")) {
 			url = "http://" + url;
 		}
